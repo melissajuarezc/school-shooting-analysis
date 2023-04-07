@@ -1,5 +1,5 @@
 # Function definitions
-# analysis-template/R/
-# Matt Dray
+# school-shooting-analysis/R/
+# Melissa Juarez
 
 # Use this file for storing functions to be used in the script files

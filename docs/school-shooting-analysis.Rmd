@@ -1,6 +1,6 @@
 ---
-title: "template-document-example"
-author: "Firstname Lastname"
+title: "K-12 School Shooting Analysis"
+author: "Melissa Juarez"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document; pdf_document; word_document
 ---
