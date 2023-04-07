@@ -32,10 +32,10 @@ victims_aggregation <- victim_df %>%
   distinct(incidentid, .keep_all = TRUE) %>%
   select(incidentid, victim_count)
 
-
+table(victims_aggregation$victim_count)
 
 ggplot(victims_aggregation, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
-  geom_histogram(aes(y=..density..), color="darkblue", fill="lightblue") + 
+  geom_histogram(aes(y=..density..), color="darkblue", fill="lightblue", binwidth = 1) + 
   geom_density(alpha=.2, fill="#FF6666") +
   geom_vline(aes(xintercept=median(as.numeric(sub("%", "",victim_count,fixed=TRUE)))),
              color="black", linetype="dashed", size=0.5) +
@@ -43,5 +43,5 @@ ggplot(victims_aggregation, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE
        x ="Victim Count", y = "Density")
 
 
-
+## merge victim count aggregation with incident df
 
