@@ -32,9 +32,13 @@ victims_aggregation <- victim_df %>%
   distinct(incidentid, .keep_all = TRUE) %>%
   select(incidentid, victim_count)
 
-table(victims_aggregation$victim_count)
+## merge victim aggregation with incident_df
+incident_df <- incident_df %>% merge(victims_aggregation, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
+incident_df$victim_count[is.na(incident_df$victim_count)] <- 0
 
-ggplot(victims_aggregation, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
+table(incident_df$victim_count)
+
+ggplot(incident_df, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
   geom_histogram(aes(y=..density..), color="darkblue", fill="lightblue", binwidth = 1) + 
   geom_density(alpha=.2, fill="#FF6666") +
   geom_vline(aes(xintercept=median(as.numeric(sub("%", "",victim_count,fixed=TRUE)))),
@@ -42,6 +46,8 @@ ggplot(victims_aggregation, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE
   labs(title="Distribution of Victim Count for School Shooting resulting in more than 1 victim",
        x ="Victim Count", y = "Density")
 
+##
+## Most school shooting between 1970-2022 between 0 and 2 victims.
+##
 
-## merge victim count aggregation with incident df
 
