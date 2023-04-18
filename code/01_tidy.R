@@ -1,5 +1,5 @@
 # Read data
-# school-shooting-analysis/R/
+# school-shooting-analysis/code/
 # Melissa Juarez
 
 ## Research Question: Using a logit model, how do X, Y, and Z variables affect the 
@@ -38,16 +38,7 @@ incident_df$victim_count[is.na(incident_df$victim_count)] <- 0
 
 table(incident_df$victim_count)
 
-ggplot(incident_df, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
-  geom_histogram(aes(y=..density..), color="darkblue", fill="lightblue", binwidth = 1) + 
-  geom_density(alpha=.2, fill="#FF6666") +
-  geom_vline(aes(xintercept=median(as.numeric(sub("%", "",victim_count,fixed=TRUE)))),
-             color="black", linetype="dashed", size=0.5) +
-  labs(title="Distribution of Victim Count for School Shooting resulting in more than 1 victim",
-       x ="Victim Count", y = "Density")
-
-##
-## Most school shooting between 1970-2022 between 0 and 2 victims.
-##
+## fix date formats to date
+incident_df$date <- as.Date(incident_df$date)
 
 
