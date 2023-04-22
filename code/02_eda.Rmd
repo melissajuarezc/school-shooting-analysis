@@ -11,15 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Research Question: Using a logit model, how do X, Y, and Z variables affect the likelihood that there will be a victim in a school shooting incident?
 
--   age, gender, and school affiliation of shooter
--   whether there were any victims targets or random
--   whether any shooter was bullied
--   whether shooter has instances of domestic violence
--   preplanned?
--   school level
--   during schoo
--   
-
 ```{r}
 library(here)
 library(readxl)
@@ -44,6 +35,7 @@ library(naniar)
 vis_miss(incident_df)
 ```
 
+
 ```{r}
 vis_miss(shooter_df)
 ```
@@ -57,12 +49,21 @@ vis_miss(weapon_df)
 ```
 
 
-## Exploring Dependent Variable
-Our Dependent Variable will be victim counts, so let's explore the distribution of victim counts for school schootings 1970-2022.
 
 ```{r}
-table(incident_df$victim_count)
-ggplot(incident_df, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
+model_df <- model_df %>% 
+  select(-sources, -number_news, -media_attention, -reliability, -summary, -active_shooter_fbi, 
+         -narrative, -situation, -barricade, -hostages, -gang_related, -accomplice)
+vis_miss(model_df)
+```
+
+
+
+## Exploring Dependent Variable
+Our Dependent Variable will be victim counts, so let's explore the distribution of victim counts for school shootings 1970-2022.
+
+```{r}
+ggplot(model_df, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) + 
   geom_histogram(aes(y=..density..), color="darkblue", fill="lightblue", binwidth = 1) + 
   geom_density(alpha=.2, fill="#FF6666") +
   geom_vline(aes(xintercept=median(as.numeric(sub("%", "",victim_count,fixed=TRUE)))),
@@ -73,19 +74,50 @@ ggplot(incident_df, aes(x=as.numeric(sub("%", "",victim_count,fixed=TRUE)))) +
 
 Most school shooting between 1970-2022 between 0 and 2 victims.
 
-
-## POSSIBLE INDEPENDENT VARIABLES
-
-### school level
-
 ```{r}
 one_var_tabyl(incident_df, school_level) %>% k()
 ```
 
 
-### XX 
+
+## POSSIBLE INDEPENDENT VARIABLES
+
+-   gender of shooter
+-   `target`: whether there were any victims targets or random
+-   `bullied`: whether any shooter was bullied; rational to target bullying & mental health counselors access
+-   `preplanned`
+-   school level
+-   during school hours?
+
+### Gender of Shooter
 
 ```{r}
-one_var_tabyl(incident_df, school_level) %>% k()
+one_var_tabyl(model_df, school_level) %>% k()
+```
+
+### school level
+
+```{r}
+one_var_tabyl(model_df, school_level) %>% k()
+```
+
+
+
+## Initial Models
+
+```{r}
+sub_df <- model_df %>% select(victim_count, bullied , during_school , shooter_count , multiple_weapons , handgun_used , rifle_used , shotgun_used) %>% na.omit()
+cor(sub_df)
+
+attach(sub_df)
+m1 <- lm(victim_count ~ bullied + during_school + shooter_count + multiple_weapons + handgun_used + rifle_used + shotgun_used)
+
+car::vif(m1)
+
+summary(m1)
+```
+
+```{r}
+lm(rifle_used ~ handgun_used) %>% summary()
 ```
 
