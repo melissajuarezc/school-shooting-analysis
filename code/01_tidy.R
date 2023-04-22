@@ -32,6 +32,7 @@ weapon_df[weapon_df == 'N/A'] <- NA
 
 incident_df$domestic_violence[incident_df$domestic_violence == 'NO'] <- 'No'
 
+
 ## fix date formats to date
 incident_df$date <- as.Date(incident_df$date)
 
@@ -49,7 +50,12 @@ victims_aggregation <- victim_df %>%
   group_by(incidentid) %>% 
   mutate(victim_count = n()) %>%
   distinct(incidentid, .keep_all = TRUE) %>%
-  select(incidentid, victim_count)
+  select(incidentid, victim_count) %>%
+  mutate(any_victims = case_when(
+    victim_count == 0 ~ 0,
+    victim_count > 0 ~ 1
+  )
+  )
 
 ## merge victim aggregation with incident_df
 model_df <- incident_df %>% merge(victims_aggregation, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
@@ -123,7 +129,7 @@ weapons_agg$weapontypes <- ifelse(stringr::str_detect(weapons_agg$weapontypes, "
 
 # merge weapon aggregation to model_df
 model_df <- model_df %>% merge(weapons_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
-table(incident_df$weapontype, useNA = "ifany")
+table(incident_df$weapontypes, useNA = "ifany")
 
 # create columns `handgun_used`, `rifle_used`, `shotgun_used`, `multiple_weapons`, based on weapontypes list & length of list
 model_df <- model_df %>%
@@ -151,6 +157,21 @@ model_df <- model_df %>%
 
 
 
+### Recoding model_df for no = 0, yes = 1
 
+model_df <- model_df %>% mutate(
+   during_school = case_when(
+     during_school == "No" ~ 0,
+     during_school == "Yes" ~ 1
+   ),
+   bullied = case_when(
+     bullied == "No" ~ 0,
+     bullied == "Yes" ~ 1
+   ),
+   preplanned = case_when(
+     preplanned == "No" ~ 0,
+     preplanned == "Yes" ~ 1
+   )
+)
 
 
