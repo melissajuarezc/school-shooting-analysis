@@ -92,32 +92,25 @@ single_shooters_agg <- shooters_agg %>%
 #shooters_agg$shootersexes <- gsub(', NA','',shooters_agg$shootersexes)
 single_shooters_agg$shootersexes <- ifelse(stringr::str_detect(single_shooters_agg$shootersexes, "NA"), 
                                   NA, single_shooters_agg$shootersexes)
+single_shooters_agg$shooterages <- ifelse(stringr::str_detect(single_shooters_agg$shooterages, "NA"), 
+                                           NA, single_shooters_agg$shooterages)
 
 table(single_shooters_agg$shootersexes, useNA = "ifany")
 table(single_shooters_agg$shooterages, useNA = "ifany")
 
-
-# For each incident, was the shooter underage and therefore in illegal possesion of a gun?
+# For each incident, was the shooter underage and therefore in illegal possession of a gun?
 # For these purposes, anyone under 18 possessing of a gun is considered unlawful.
 
-
+single_shooters_agg <- single_shooters_agg %>% 
+  mutate(minor = case_when(
+    shooterages %in% c('10','11','12','13','14','15','16','17', 'Child', 'Minor','Teen') ~ 1,
+    !(shooterages %in% c('10','11','12','13','14','15','16','17', 'Child', 'Minor','Teen')) ~ 0
+  ))
 
 ## merge victim aggregation with model_df
-model_df <- model_df %>% merge(shooters_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
+model_df <- model_df %>% merge(single_shooters_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
 ## some incidents have no specified shooter in the shooter_df; will keep them marked as NA
 
-model_df <- model_df %>%
-  mutate(male_shooter = case_when( 
-    is.na(shootersexes) ~ NA_real_,
-    stringr::str_detect(shootersexes, "Male") ~ 1,
-    !(stringr::str_detect(shootersexes, "Male")) ~ 0,
-  ), 
-  female_shooter = case_when( 
-    is.na(shootersexes) ~ NA_real_,
-    stringr::str_detect(shootersexes, "Female") ~ 1,
-    !(stringr::str_detect(shootersexes, "Female")) ~ 0,
-  )
-  )
 
 ######### WEAPONS AGGREGATION ###########
 # the goal is to retain information on if there were multiple weapons at the incident, and what category of weapons there were
