@@ -59,7 +59,7 @@ victims_aggregation <- victim_df %>%
 
 ## merge victim aggregation with incident_df
 model_df <- incident_df %>% merge(victims_aggregation, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
-model_df$victim_count[is.na(incident_df$victim_count)] <- 0
+model_df$victim_count[is.na(model_df$victim_count)] <- 0
 
 table(model_df$victim_count, useNA = "ifany")
 
@@ -68,20 +68,39 @@ table(model_df$victim_count, useNA = "ifany")
 # and how many shooters of a certain gender were the incident
 
 table(shooter_df$gender, useNA = "ifany")
-## For each shooting incident, how many total shooters were there & what were their genders?
+## (1) For each shooting incident, how many total shooters were there & what were their genders?
 shooters_agg <- shooter_df %>%
   group_by(incidentid) %>% 
   mutate(shooter_count = n(),
-         shootersexes = paste(gender, collapse = ", ")) %>%
+         shootersexes = paste(gender, collapse = ", "),
+         shooterages = paste(age, collapse = ", ")
+         ) %>%
   distinct(incidentid, .keep_all = TRUE) %>%
-  select(incidentid, shooter_count, shootersexes) %>%
-  mutate(num_male_shooters = stringr::str_count(shootersexes, "Male"),
-         num_female_shooters = stringr::str_count(shootersexes, "Female") 
-  )
+  select(incidentid, shooter_count, shootersexes, shooterages)
+
+# look at distribution of number of shooters and ages per incident
+table(shooters_agg$shooter_count, useNA = "ifany")
+
+# filter to only look at instances of single-shooters
+single_shooters_agg <- shooters_agg %>% 
+  filter(shooter_count == 1) %>%
+  mutate(sex = case_when(
+    stringr::str_count(shootersexes, "Male") == TRUE ~ 0,
+    stringr::str_count(shootersexes, "Female") == TRUE ~ 1
+  ))
   
-shooters_agg$shootersexes <- gsub(', NA','',shooters_agg$shootersexes)
-shooters_agg$shootersexes <- ifelse(stringr::str_detect(shooters_agg$shootersexes, "NA"), 
-                                  NA, shooters_agg$shootersexes)
+#shooters_agg$shootersexes <- gsub(', NA','',shooters_agg$shootersexes)
+single_shooters_agg$shootersexes <- ifelse(stringr::str_detect(single_shooters_agg$shootersexes, "NA"), 
+                                  NA, single_shooters_agg$shootersexes)
+
+table(single_shooters_agg$shootersexes, useNA = "ifany")
+table(single_shooters_agg$shooterages, useNA = "ifany")
+
+
+# For each incident, was the shooter underage and therefore in illegal possesion of a gun?
+# For these purposes, anyone under 18 possessing of a gun is considered unlawful.
+
+
 
 ## merge victim aggregation with model_df
 model_df <- model_df %>% merge(shooters_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
