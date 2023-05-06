@@ -116,8 +116,9 @@ single_shooters_agg <- single_shooters_agg %>%
   ))
 
 ## merge victim aggregation with model_df
-model_df <- model_df %>% merge(single_shooters_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
-## some incidents have no specified shooter in the shooter_df; will keep them marked as NA
+model_df <- model_df %>% 
+  merge(single_shooters_agg, by.x = "incident_id", by.y = "incidentid", all.x=TRUE) %>%
+  filter(!is.na(shooter_count) & shooter_count == 1)
 
 
 ######### WEAPONS AGGREGATION ###########
