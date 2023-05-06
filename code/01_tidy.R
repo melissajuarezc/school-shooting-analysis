@@ -35,6 +35,7 @@ incident_df$domestic_violence[incident_df$domestic_violence == 'NO'] <- 'No'
 
 ## fix date formats to date
 incident_df$date <- as.Date(incident_df$date)
+incident_df$yr_since_1970 <- as.numeric(format(incident_df$date,'%Y')) - 1970
 
 ########################### AGGREGATION #############################
 # The goal of this is to create one dataframe used for our analysis
@@ -54,12 +55,17 @@ victims_aggregation <- victim_df %>%
   mutate(any_victims = case_when(
     victim_count == 0 ~ 0,
     victim_count > 0 ~ 1
+  ), multi_victim = case_when(
+    victim_count <= 1 ~ 0,
+    victim_count > 1 ~ 1
   )
   )
 
 ## merge victim aggregation with incident_df
 model_df <- incident_df %>% merge(victims_aggregation, by.x = "incident_id", by.y = "incidentid", all.x=TRUE)
 model_df$victim_count[is.na(model_df$victim_count)] <- 0
+model_df$any_victims[is.na(model_df$any_victims)] <- 0
+
 
 table(model_df$victim_count, useNA = "ifany")
 
@@ -103,8 +109,10 @@ table(single_shooters_agg$shooterages, useNA = "ifany")
 
 single_shooters_agg <- single_shooters_agg %>% 
   mutate(minor = case_when(
-    shooterages %in% c('10','11','12','13','14','15','16','17', 'Child', 'Minor','Teen') ~ 1,
-    !(shooterages %in% c('10','11','12','13','14','15','16','17', 'Child', 'Minor','Teen')) ~ 0
+    shooterages %in% c('5', '6', '7', '8', '9', '10','11','12','13','14','15','16','17', 
+                       'Child', 'Minor','Teen') ~ 1,
+    !(shooterages %in% c('5', '6', '7', '8', '9', '10','11','12','13','14','15','16','17', 
+                         'Child', 'Minor','Teen')) ~ 0
   ))
 
 ## merge victim aggregation with model_df
