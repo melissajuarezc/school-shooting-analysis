@@ -26,7 +26,7 @@ model_df <- model_df %>%
          rifle_used, shotgun_used, victim_count, multi_victim)
 vis_miss(model_df)
 
-## we see that our dataframe has 12.5% missingness
+## we see that our dataframe has 11.5% missingness
 
 
 ########## GUN EFFECTS MODEL ########## 
@@ -100,7 +100,7 @@ ot <- outlierTest(g5)
 
 ot_df <- as.data.frame(do.call(cbind, ot))
 outliers <- merge(guns_df, ot_df, by = 0)
-outliers$Row.names <- as.numeric(outliers$Row.names)
+outliers$Row.names <- as.numeric(outliers$Row.names); outliers
 
 par(mfrow=c(2,2))
 plot(g5)
@@ -156,11 +156,11 @@ m1 <- lm(victim_count ~ bullied)
 summary(m1)
 
 ## what happens when I control for gender and year?
-m2 <- lm(victim_count ~ bullied + yr_since_1970 + sex)
+m2 <- lm(victim_count ~ bullied + yr_since_1970 + sex, data = model_df)
 summary(m2)
 
 ## take away sex bc not significant
-m3 <- lm(victim_count ~ bullied + yr_since_1970)
+m3 <- lm(victim_count ~ bullied + yr_since_1970, data = model_df)
 summary(m3)
 
 ## interaction term?
