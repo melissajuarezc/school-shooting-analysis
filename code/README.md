@@ -2,9 +2,8 @@
 This directory contains the R code used in the School Shooting Analysis project. The code is divided into three files:
 
 `01_tidy.R`: This script reads in the raw data and cleans and transforms the data into a tidy format. 
-`02_EDA.Rmd`: This file reads in the tidy data and performs exploratory data analysis (EDA) to better understand the variables and their relationships. 
-`03_school-shooting-analysis`: 
-`functions.R`: This script contains any custom functions used in the analysis.
+`02_analysis.R`: This file reads in the tidy data and creates linear models to better understand the variables and their relationships. 
+
 Each script is annotated with comments explaining the code. To run the analysis, you should run the scripts in the order of the naming conventions.
 
 ### Requirements
