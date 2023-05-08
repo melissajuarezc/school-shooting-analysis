@@ -1,5 +1,5 @@
 ## School Shooting Analysis
-This repository contains an independent project focused on analyzing Shooting Incidents at K-12 Schools (Jan 1970-Jun 2022) provided by the Center for Homeland Defense and Security. The goal of this project is to create models from the data that might help us understand the likelihood of a shooting incident resulting in a victim. In doing so, we might be able to provide recommendations on interventions for characteristics that are associated with high-likelihood cases of victimhood.
+This repository contains an independent project focused on analyzing Shooting Incidents at K-12 Schools (Jan 1970-Jun 2022) provided by the Center for Homeland Defense and Security. The goal of this project is to create models from the data to help us understand the effects gun and mental health predictors on victimhood outcomes. In doing so, we might be able to provide recommendations on interventions for characteristics that are associated with high-likelihood cases of victimhood.
 
 ### Data Source
 The primary dataset used in this project is the Shooting Incidents at K-12 Schools dataset, which is publicly available from the Center for Homeland Defense and Security. The dataset contains information on over 1,000 shooting incidents that have occurred at K-12 schools in the United States since 1970.
