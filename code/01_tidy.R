@@ -2,9 +2,6 @@
 # school-shooting-analysis/code/
 # Melissa Juarez
 
-## Research Question: Using a logit model, how do X, Y, and Z variables affect the 
-## likelhihood that there will be a victim in a school shooting incident?
-
 library(here)
 library(readxl)
 library(dplyr)
